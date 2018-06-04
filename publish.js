@@ -2,7 +2,7 @@ var zipFolder = require('zip-folder');
 var path = require('path');
 var fs = require('fs');
 var request = require('request');
-//test
+//testing
 var rootFolder = path.resolve('.');
 var zipPath = path.resolve(rootFolder, '../ff-qnamaker-testbotservice.zip');
 var kuduApi = 'https://ff-qnamaker-testbotservice.scm.azurewebsites.net/api/zip/site/wwwroot';
