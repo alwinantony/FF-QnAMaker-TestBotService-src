@@ -89,7 +89,7 @@ bot.dialog('/', //basicQnAMakerDialog);
             }
         }
     ]);
-*/
+
 
 
 // Recognizer and and Dialog for GA QnAMaker service
@@ -119,3 +119,41 @@ builder_cognitiveservices.LuisActionBinding.bindToBotDialog(bot, intentsDialog, 
 
 // Default message
 intentsDialog.onDefault(session => session.send('Sorry, I didn\'t understand that.'));
+https://github.com/Microsoft/BotBuilder-CognitiveServices/blob/master/Node/samples/QnAMaker/QnAWithLUIS/app.js
+*/
+
+//=========================================================
+// Recognizers
+//=========================================================
+
+var qnaRecognizer = new builder_cognitiveservices.QnAMakerRecognizer({
+    knowledgeBaseId: process.env.QnAKnowledgebaseId,
+    authKey: process.env.QnAAuthKey || process.env.QnASubscriptionKey, // Backward compatibility with QnAMaker (Preview)
+    endpointHostName: process.env.QnAEndpointHostName,
+    top: 4});
+
+var model='https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/453c919d-d4b0-4e8d-851a-f953df97205d?subscription-key=433ca45e770c4acabf747038f27dd43b&staging=true&verbose=true&timezoneOffset=-480&q=';
+var recognizer = new builder.LuisRecognizer(model);
+
+//=========================================================
+// Bot Dialogs
+//=========================================================
+var intents = new builder.IntentDialog({ recognizers: [recognizer, qnaRecognizer] });
+bot.dialog('/', intents);
+
+intents.matches('luisIntent1', builder.DialogAction.send('Inside LUIS Intent 1.'));
+
+intents.matches('luisIntent2', builder.DialogAction.send('Inside LUIS Intent 2.'));
+
+intents.matches('qna', [
+    function (session, args, next) {
+        var answerEntity = builder.EntityRecognizer.findEntity(args.entities, 'answer');
+        session.send(answerEntity.entity);
+    }
+]);
+
+intents.onDefault([
+    function(session){
+        session.send('Sorry!! No match!!');
+    }
+]);
