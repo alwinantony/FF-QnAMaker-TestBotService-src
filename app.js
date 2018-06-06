@@ -132,7 +132,7 @@ var qnaRecognizer = new builder_cognitiveservices.QnAMakerRecognizer({
     endpointHostName: process.env.QnAEndpointHostName,
     top: 4});
 
-var model='https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/453c919d-d4b0-4e8d-851a-f953df97205d?subscription-key=433ca45e770c4acabf747038f27dd43b&staging=true&verbose=true&timezoneOffset=-480&q=';
+var model='https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/453c919d-d4b0-4e8d-851a-f953df97205d?subscription-key=433ca45e770c4acabf747038f27dd43b&verbose=true&timezoneOffset=0&q=';
 var recognizer = new builder.LuisRecognizer(model);
 
 //=========================================================
