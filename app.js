@@ -20,8 +20,7 @@ var connector = new builder.ChatConnector({
     openIdMetadata: process.env.BotOpenIdMetadata 
 });
 
-// Listen for messages from users 
-server.post('/api/messages', connector.listen());
+
 
 /*----------------------------------------------------------------------------------------
 * Bot Storage: This is a great spot to register the private state storage for your bot. 
@@ -36,7 +35,8 @@ var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azu
 // Create your bot with a function to receive messages from the user
 var bot = new builder.UniversalBot(connector);
 bot.set('storage', tableStorage);
-
+// Listen for messages from users 
+server.post('/api/messages', connector.listen());
 /*
 // Recognizer and and Dialog for preview QnAMaker service
 var previewRecognizer = new builder_cognitiveservices.QnAMakerRecognizer({
