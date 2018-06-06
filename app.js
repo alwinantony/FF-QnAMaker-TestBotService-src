@@ -154,6 +154,6 @@ intents.matches('qna', [
 
 intents.onDefault([
     function(session){
-        session.send('Sorry!! No match!!');
+        session.send('Sorry, I cant help you with that. Let me connect you to a human.');
     }
 ]);
