@@ -37,6 +37,7 @@ var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azu
 var bot = new builder.UniversalBot(connector);
 bot.set('storage', tableStorage);
 
+/*
 // Recognizer and and Dialog for preview QnAMaker service
 var previewRecognizer = new builder_cognitiveservices.QnAMakerRecognizer({
     knowledgeBaseId: process.env.QnAKnowledgebaseId,
@@ -88,3 +89,33 @@ bot.dialog('/', //basicQnAMakerDialog);
             }
         }
     ]);
+*/
+
+
+// Recognizer and and Dialog for GA QnAMaker service
+var qnaRecognizer = new builder_cognitiveservices.QnAMakerRecognizer({
+    knowledgeBaseId: process.env.QnAKnowledgebaseId,
+    authKey: process.env.QnAAuthKey || process.env.QnASubscriptionKey, // Backward compatibility with QnAMaker (Preview)
+    endpointHostName: process.env.QnAEndpointHostName
+});
+
+   
+var LuisModelUrl = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/453c919d-d4b0-4e8d-851a-f953df97205d?subscription-key=433ca45e770c4acabf747038f27dd43b&staging=true&verbose=true&timezoneOffset=-480&q=';      
+var luisRecognizer = new builder.LuisRecognizer(LuisModelUrl);
+
+// Setup dialog
+var intentsDialog = new builder.IntentDialog({ recognizers: [qnaRecognizer, luisRecognizer] });
+bot.dialog('/', intentsDialog);
+
+// QnA Maker
+intentsDialog.matches('qna', (session, args, next) => {
+    var answerEntity = builder.EntityRecognizer.findEntity(args.entities, 'answer');
+    session.send(answerEntity.entity);
+});
+
+// LUIS Action Binding
+var SampleActions = require('../LuisActionBinding/all');
+builder_cognitiveservices.LuisActionBinding.bindToBotDialog(bot, intentsDialog, LuisModelUrl, SampleActions);
+
+// Default message
+intentsDialog.onDefault(session => session.send('Sorry, I didn\'t understand that.'));
