@@ -30,11 +30,19 @@ server.post('/api/messages', connector.listen());
 * ---------------------------------------------------------------------------------------- */
 
 var tableName = 'botdata';
-var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.env['AzureWebJobsStorage']);
+//var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.env['AzureWebJobsStorage']);
+
+//=========================================================USE TO TEST LOCALLY ON EMULATOR
+var storageName = 'ffqnamakertestbotservice'; 
+var storageKey = 'qmv/iG+dQ9WalD8PkHyPeyCuA+zYfqWGlr16JMI9jGJiYhK4+U4RYMl+gwvKeuFuvzygNT1gu3LP2VJi8NMLfA==';
+var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, storageName, storageKey);
+//=========================================================USE TO TEST LOCALLY ON EMULATOR
+
 var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azureTableClient);
 
 // Create your bot with a function to receive messages from the user
 var bot = new builder.UniversalBot(connector);
+
 bot.set('storage', tableStorage);
 
 /*
@@ -126,19 +134,42 @@ https://github.com/Microsoft/BotBuilder-CognitiveServices/blob/master/Node/sampl
 // Recognizers
 //=========================================================
 
-var qnaRecognizer = new builder_cognitiveservices.QnAMakerRecognizer({
+/*var qnaRecognizer = new builder_cognitiveservices.QnAMakerRecognizer({
     knowledgeBaseId: process.env.QnAKnowledgebaseId,
     authKey: process.env.QnAAuthKey || process.env.QnASubscriptionKey, // Backward compatibility with QnAMaker (Preview)
     endpointHostName: process.env.QnAEndpointHostName,
     top: 4});
+*/
 
-var model='https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/453c919d-d4b0-4e8d-851a-f953df97205d?subscription-key=433ca45e770c4acabf747038f27dd43b&verbose=true&timezoneOffset=0&q=';
-var recognizer = new builder.LuisRecognizer(model);
+//var model='https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/453c919d-d4b0-4e8d-851a-f953df97205d?subscription-key=433ca45e770c4acabf747038f27dd43b&verbose=true&timezoneOffset=0&q=';
+//var luisRecognizer = new builder.LuisRecognizer(model);
+
+//=========================================================USE TO TEST LOCALLY ON EMULATOR
+var qnaknowledgeBaseId = '0cd2623d-0226-42ef-86ec-1211d44e2533';
+var qnaauthKey = '42826224-b8c3-4344-abb1-e6521c9cc254';
+var qnaendpointHostName = 'https://ff-qnamaker-test.azurewebsites.net/qnamaker';
+var qnaRecognizer = new builder_cognitiveservices.QnAMakerRecognizer({
+    knowledgeBaseId: qnaknowledgeBaseId,
+    authKey: qnaauthKey, 
+    endpointHostName: qnaendpointHostName,
+    top: 4});
+
+var luisAppId = '453c919d-d4b0-4e8d-851a-f953df97205d';
+var luisAPIKey = '433ca45e770c4acabf747038f27dd43b';
+var luisAPIHostName = 'westus.api.cognitive.microsoft.com';
+const LuisModelUrl = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/' + luisAppId + '?subscription-key=' + luisAPIKey;
+
+var luisRecognizer = new builder.LuisRecognizer(LuisModelUrl);    
+//=========================================================USE TO TEST LOCALLY ON EMULATOR
+
+
+
 
 //=========================================================
 // Bot Dialogs
 //=========================================================
-var intents = new builder.IntentDialog({ recognizers: [recognizer, qnaRecognizer] });
+var intents = new builder.IntentDialog({ recognizers: [luisRecognizer, qnaRecognizer] });
+
 bot.dialog('/', intents);
 
 intents.matches('luisIntent1', builder.DialogAction.send('Inside LUIS Intent 1.'));
@@ -151,6 +182,8 @@ intents.matches('qna', [
         session.send(answerEntity.entity);
     }
 ]);
+
+
 
 intents.onDefault([
     function(session){
