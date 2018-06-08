@@ -258,7 +258,7 @@ var basicQnAMakerDialog = new builder_cognitiveservices.QnAMakerDialog({
         },
         function(session, results, next){
             if(results.response.entity.includes('Yes')){
-                session.endConversation('Great! Follow these steps to join the meeting: \n\n1. locate the Skype Room Table \n2.	Next, find your scheduled meeting on the screen.\n3.	Click the JOIN button \n4.	That’s it! You should now be connected.');  
+                session.endConversation('Great! Follow these steps to join the meeting: \n\n1. Locate the Skype Room Table \n2.	Next, find your scheduled meeting on the screen.\n3.	Click the JOIN button \n4.	That’s it! You should now be connected.');  
             }else{
                 session.endConversation('Unfortunately, the meeting was not setup with Skype and cannot be used with Skype at this time.');  
             }
@@ -270,7 +270,7 @@ var basicQnAMakerDialog = new builder_cognitiveservices.QnAMakerDialog({
  
     bot.dialog('getSkypeMeetingType', [
         function(session, args, next){
-            builder.Prompts.choice(session, 'Metting thorugh Skype', 'Yes|No', { listStyle: builder.ListStyle.button });
+            builder.Prompts.choice(session, 'Was the meeting created through Outlook with the Skype meeting option checked?', 'Yes|No', { listStyle: builder.ListStyle.button });
         },
         function(session, results, next){
             console.log(session.dialogStack());
