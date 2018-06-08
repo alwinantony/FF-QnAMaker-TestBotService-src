@@ -198,7 +198,7 @@ var qnaRecognizer = new builder_cognitiveservices.QnAMakerRecognizer({
 
 var basicQnAMakerDialog = new builder_cognitiveservices.QnAMakerDialog({
     recognizers: [qnaRecognizer],
-    defaultMessage: 'Sorry, I cant help you with that. Let me connect you to an IT representative',
+    defaultMessage: 'Sorry, I cant help you with that. Let me connect you to an IT representative. Please hold..',
     qnaThreshold: 0.3}
     );
     
